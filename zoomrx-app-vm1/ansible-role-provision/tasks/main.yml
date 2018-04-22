@@ -86,7 +86,7 @@
     force: no
     owner: zoomapp
     group: zoomapp
-    mode: 0766
+    mode: 0644
 
 - name: creating file for cronjob log"
   copy:
@@ -95,7 +95,7 @@
     force: no
     owner: zoomapp
     group: zoomapp
-    mode: 0766
+    mode: 0644
 
 - cron: 
     name: "checking app process running status"
