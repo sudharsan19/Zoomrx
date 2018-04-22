@@ -1,0 +1,23 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  if Vagrant.has_plugin?("vagrant-timezone")
+    config.timezone.value = "EST"
+  end
+  config.vm.box = "precise64"
+  config.vm.network "private_network", ip: "192.168.33.15"
+  config.vm.network "forwarded_port", guest: 80, host: 5000, auto_correct: true
+	config.vm.provider "virtualbox" do |vb|
+    		vb.customize ["modifyvm", :id, "--memory", "2048"] #memory to 1GB
+    		vb.customize ["modifyvm", :id, "--cpuexecutioncap", "99"] #limit the use of cpu to 50%
+    		vb.customize ["modifyvm", :id, "--ioapic", "on"] #needed to use more cpus
+    		vb.customize ["modifyvm", :id, "--cpus", "2"]  #enable 2 cpus for the vm
+	end
+	config.vm.provision "ansible" do |ansible|
+		ansible.playbook = "provisioner.yml"
+ 	end
+end

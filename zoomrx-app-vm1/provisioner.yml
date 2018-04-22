@@ -1,0 +1,9 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: ansible-role-provision
+      gh_repo: https://github.com/ZoomRx/zoomrx-devops-challenge.git
+      dest_dir: /webapps/zoomrx
+      dest_dir_owner: zoomapp
+      dest_dir_group: zoomapp
+      dest_dir_perm: 0755

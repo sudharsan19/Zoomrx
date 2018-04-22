@@ -1,0 +1,116 @@
+---
+- name: Creating & Ensure group "zoomapp" exists
+  group:
+    name: zoomapp
+    state: present
+
+- name: Add user "non-privileged user"  
+  user:
+    name: zoomapp
+    groups: zoomapp
+    shell: /bin/bash
+    password: ZoomRx
+    append: yes
+    comment: "non-privileged user"
+    state: present
+
+- name: Installing Git
+  apt:
+    name: git
+    state: present
+
+- name: Installing logrotate
+  package:
+    name: logrotate
+    state: present
+  when: logrotate_scripts is defined and logrotate_scripts|length > 0
+
+- name: creating source directory"
+  file:
+    path: "{{ dest_dir }}"
+    state: directory
+    owner: "zoomapp"
+    group: "zoomapp"
+    recurse: yes
+
+- file:
+    path: "{{ dest_dir }}"
+    mode: 0777
+    state: directory
+
+- name: cloning repo
+  git:
+    repo: "{{ gh_repo }}"
+    version: "{{ gh_branch | default('master') }}"
+    dest: "{{ dest_dir }}"
+    accept_hostkey: yes
+    force: yes
+
+- name: set app code user and group permissions
+  file:
+    path: "{{ dest_dir }}"
+    state: directory
+    recurse: yes
+    owner: "{{ dest_dir_owner }}"
+    group: "{{ dest_dir_group }}"
+
+- name: chmoding app code dir
+  file:
+    path: "{{ dest_dir }}"
+    state: directory
+    mode: "{{ dest_dir_perm }}"
+
+- name: Ensure Pip is installed.
+  package:
+    name: "{{ pip_package }}"
+    state: present
+
+- name:  Copy Remediation Script 
+  copy: src={{ role_path }}/files/remediation.sh dest=/webapps/zoomrx/ owner=zoomapp group=zoomapp mode=0755 force=yes
+
+- name: Copy Boot App Script
+  copy: src={{ role_path }}/files/check_script_process.sh dest=/webapps/zoomrx/ owner=zoomapp group=zoomapp mode=0755 force=yes
+
+- name: creating app log directory"
+  file:
+    path: "/var/log/zoomrx"
+    state: directory
+    owner: zoomapp
+    group: zoomapp
+    recurse: yes
+
+- name: creating file for remediation log"
+  copy:
+    content: ""
+    dest: "/var/log/remedy.log"
+    force: no
+    owner: zoomapp
+    group: zoomapp
+    mode: 0766
+
+- cron: 
+    name: "checking app process running status"
+    minute: "5"
+    user: zoomapp
+    job: "/webapps/zoomrx/check_script_process.sh"
+
+- cron:
+    name: "a job for reboot"
+    special_time: reboot
+    user: zoomapp
+    job: "/webapps/zoomrx/remediation.sh"
+
+- name: Ensure pip_install_packages are installed.
+  pip:
+    name: "{{ item.name | default(item) }}"
+    state: "{{ item.state | default(omit) }}"
+  with_items: "{{ pip_install_packages }}"
+  ignore_errors: yes
+
+- name: Setup logrotate.d scripts
+  template:
+    src: logrotate.d.j2
+    dest: "{{ logrotate_conf_dir }}{{ item.name }}"
+  with_items: "{{ logrotate_scripts }}"
+  when: logrotate_scripts is defined
+...

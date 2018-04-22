@@ -1,0 +1,29 @@
+---
+# For Python 3, use python3-pip.
+pip_package: python-pip
+
+pip_install_packages:
+  - redis
+  - optparse
+  - hashlib
+  - urllib2
+  - Flask
+  - logging
+
+logrotate_conf_dir: "/etc/logrotate.d/"
+logrotate_scripts:
+  - name: zoomrx app log
+    path: /var/log/nginx/options.log
+    options:
+     - hourly
+     - rotate 7
+     - missingok
+     - compress
+     - delaycompress
+     - copytruncate
+
+  - name: remediation watch dog
+    path: /var/log/remedy.log
+    options:
+     - hourly
+     - size 25M
