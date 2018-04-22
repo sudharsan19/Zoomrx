@@ -15,15 +15,23 @@ logrotate_scripts:
   - name: zoomrx_app_log
     path: /var/log/zoomrx/app.log
     options:
-     - daily
-     - rotate 7
+     - size 10M
+     - rotate 5
      - missingok
-     - compress
-     - delaycompress
-     - copytruncate
+     - notifempty
+     - sharedscripts
+     - postrotate
+     - touch /var/log/zoomrx/app.log; chown zoomapp:zoomapp /var/log/zoomrx/app.log
+     - endscript
 
   - name: remediation_watch_dog
     path: /var/log/remedy.log
     options:
-     - daily
-     - size 25M
+     - size 2M
+     - rotate 5
+     - missingok
+     - notifempty
+     - sharedscripts
+     - postrotate
+     - touch /var/log/remedy.log; chown zoomapp:zoomapp /var/log/remedy.log
+     - endscript

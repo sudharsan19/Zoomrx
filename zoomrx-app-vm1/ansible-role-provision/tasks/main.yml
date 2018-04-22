@@ -113,7 +113,7 @@
     name: hourly_log_rotate
     special_time: hourly
     user: root
-    job: "logrotate /etc/logrotate.conf"
+    job: "logrotate -f /etc/logrotate.conf"
 
 - name: Ensure pip_install_packages are installed.
   pip:
