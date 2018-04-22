@@ -12,8 +12,8 @@ pip_install_packages:
 
 logrotate_conf_dir: "/etc/logrotate.d/"
 logrotate_scripts:
-  - name: zoomrx app log
-    path: /var/log/nginx/options.log
+  - name: zoomrx_app_log
+    path: /var/log/zoomrx/app.log
     options:
      - hourly
      - rotate 7
@@ -22,7 +22,7 @@ logrotate_scripts:
      - delaycompress
      - copytruncate
 
-  - name: remediation watch dog
+  - name: remediation_watch_dog
     path: /var/log/remedy.log
     options:
      - hourly
