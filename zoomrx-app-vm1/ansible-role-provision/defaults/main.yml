@@ -15,7 +15,7 @@ logrotate_scripts:
   - name: zoomrx_app_log
     path: /var/log/zoomrx/app.log
     options:
-     - hourly
+     - daily
      - rotate 7
      - missingok
      - compress
@@ -25,5 +25,5 @@ logrotate_scripts:
   - name: remediation_watch_dog
     path: /var/log/remedy.log
     options:
-     - hourly
+     - daily
      - size 25M
