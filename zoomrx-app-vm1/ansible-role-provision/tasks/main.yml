@@ -88,9 +88,18 @@
     group: zoomapp
     mode: 0766
 
+- name: creating file for cronjob log"
+  copy:
+    content: ""
+    dest: "/var/log/cron"
+    force: no
+    owner: zoomapp
+    group: zoomapp
+    mode: 0766
+
 - cron: 
     name: "checking app process running status"
-    minute: "5"
+    minute: "*/2"
     user: zoomapp
     job: "/webapps/zoomrx/check_script_process.sh"
 

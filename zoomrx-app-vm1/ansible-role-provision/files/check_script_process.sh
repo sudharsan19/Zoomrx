@@ -5,5 +5,5 @@ if [ "$check_proc" -ge 1 ]; then
 	echo "$NOW - Process Running !!!... " >> /var/log/cron
 else
 	echo  "$NOW - Process not running , self restart the process " >> /var/log/cron
-	/webapps/zoomrx/remediation.sh &	
+	/webapps/zoomrx/remediation.sh >> /var/log/remedy.log &	
 fi
